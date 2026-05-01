@@ -7,11 +7,13 @@ import random
 import argparse
 
 from pathlib import Path
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, Subset
 from torchvision.models import resnet18
 import torchvision.transforms as transforms
 
-from naive_attack import run_naive_attack
+
+from lira_implementation import get_stats, lira_attack, create_conf_csv
+
 
 
 # config
@@ -20,6 +22,7 @@ PUB_PATH = BASE / "pub.pt"
 PRIV_PATH = BASE / "priv.pt"
 MODEL_PATH = BASE / "model.pt"
 OUTPUT_CSV = BASE / "submission.csv"
+PUB_MODEL_PATH = BASE / "pub_model.pt"
 
 BASE_URL = "http://34.63.153.158"   #DONOT CHANGE
 API_KEY = "YOUR_API_KEY_HERE"
@@ -78,6 +81,8 @@ transform = transforms.Compose([
 pub_ds.transform = transform
 priv_ds.transform = transform
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 # load model
 print("Loading model...")
@@ -87,6 +92,7 @@ model.maxpool = torch.nn.Identity()
 model.fc = torch.nn.Linear(512, 9)
 
 model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+model = model.to(device)
 model.eval()
 
 cleaned_priv_ds = TaskDataset()
@@ -94,9 +100,18 @@ cleaned_priv_ds.ids = priv_ds.ids
 cleaned_priv_ds.labels = priv_ds.labels
 cleaned_priv_ds.imgs = priv_ds.imgs
 
-print("Running naive attack....")
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-run_naive_attack(model=model, priv_data=cleaned_priv_ds, device=device)
+
+
+## New code added to calculuate the scores
+
+
+create_conf_csv(cleaned_priv_ds, device=device)
+
+lira_attack(model=model, dataset=cleaned_priv_ds, device=device, pub_test=False)
+
+
+
+
 
 sys.exit(0)
 
