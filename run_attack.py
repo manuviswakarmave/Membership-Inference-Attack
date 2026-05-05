@@ -11,7 +11,7 @@ from torch.utils.data import Dataset, Subset
 from torchvision.models import resnet18
 import torchvision.transforms as transforms
 
-from lira_implementation import get_stats, lira_attack, create_conf_csv, find_matching_shadow_model
+from lira_implementation import get_stats, lira_attack, create_conf_csv
 
 
 # config
@@ -65,10 +65,12 @@ print(type(pub_ds), type(priv_ds))
 MEAN = [0.7406, 0.5331, 0.7059]
 STD = [0.1491, 0.1864, 0.1301]
 
-transform = transforms.Compose([
-    transforms.Resize(32),
-    transforms.Normalize(mean=MEAN, std=STD),
-])
+transform = transforms.Compose(
+    [
+        transforms.Resize(32),
+        transforms.Normalize(mean=MEAN, std=STD),
+    ]
+)
 
 pub_ds.transform = transform
 priv_ds.transform = transform
@@ -91,7 +93,6 @@ cleaned_priv_ds = TaskDataset()
 cleaned_priv_ds.ids = priv_ds.ids
 cleaned_priv_ds.labels = priv_ds.labels
 cleaned_priv_ds.imgs = priv_ds.imgs
-
 
 
 for i in range(5):  # to increase the number of shadow models

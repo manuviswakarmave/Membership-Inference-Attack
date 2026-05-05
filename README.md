@@ -10,8 +10,23 @@ The implementation trains several shadow models on different splits of the avail
 
 Run the attack using:
 
+
+```bash
+python -m venv env
+```
+```bash
+# For Linux/MacOS
+source env/bin/activate
+# For Windows
+.\env\Scripts\activate
+```
+
+```bash
+pip install -r requirements.txt
+```
 ```bash
 python run_attack.py
+```
 ```
 
 The script calls the attack pipeline and produces a `submission.csv` file containing membership scores for each sample.
