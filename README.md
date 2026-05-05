@@ -38,3 +38,34 @@ log p(score | in) - log p(score | out)
 A higher score means the sample is more likely to be a member of the target model's training set.
 
 ---
+## Important Output Files
+
+| File | Description |
+|---|---|
+| `conf_in.csv` | Confidence scores from shadow models when samples were included in training |
+| `conf_out.csv` | Confidence scores from shadow models when samples were excluded from training |
+| `submission.csv` | Final normalized membership scores |
+
+---
+
+## Main Functions
+
+| Function | Purpose |
+|---|---|
+| `lira_attack` | Runs the full attack pipeline on the target model |
+| `create_conf_csv` | Trains shadow models and collects in/out confidence scores |
+| `create_shadow_split` | Creates class-balanced in/out splits |
+| `train_model` | Trains a shadow ResNet-18 model |
+| `create_shadow_model` | Builds the modified ResNet-18 architecture |
+| `get_confidence` | Extracts true-label confidence scores and converts them to log-odds |
+| `save_conf` | Saves confidence values to CSV |
+| `get_stats` | Computes mean and standard deviation per sample ID |
+| `gaussian_logpdf` | Computes Gaussian log probability density |
+| `compute_lira_scores` | Computes log-likelihood ratio scores |
+| `compute_tpr_at_fpr` | Evaluates TPR at a fixed FPR when public labels are available |
+| `normalize_scores` | Converts raw scores to the range `[0, 1]` |
+| `validate_submission` | Checks whether the final submission is valid |
+| `save_submission` | Saves the final `submission.csv` file |
+
+---
+
